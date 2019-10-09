@@ -23,22 +23,17 @@ public class UploadController {
     }
 
     @PostMapping("/upload") // //new annotation since 4.3
-    public String singleFileUpload(@RequestParam("file") MultipartFile multi,
-                                   RedirectAttributes redirectAttributes) throws IOException, ParserConfigurationException {
+    public String singleFileUpload(@RequestParam("file") MultipartFile multi
+            , RedirectAttributes redirectAttributes) throws IOException, ParserConfigurationException {
         if (multi.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+            redirectAttributes.addFlashAttribute("warning", "Please select a file to upload");
             return "redirect:uploadStatus";
         }
         Document document = getDocument(multi.getInputStream());
-        redirectAttributes.addFlashAttribute("message",
-                document.getDocumentElement().getTextContent());
+        redirectAttributes.addFlashAttribute("document", document);
         return "redirect:/uploadStatus";
     }
 
-    @GetMapping("/uploadStatus")
-    public String uploadStatus() {
-        return "uploadStatus";
-    }
 
     private static Document getDocument(InputStream inputStream) throws IOException, ParserConfigurationException {
         PDDocument pdf = PDDocument.load(inputStream);
